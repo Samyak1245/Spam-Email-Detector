@@ -2,6 +2,9 @@
 
 A machine learning project that classifies email/SMS messages as **Spam** or **Ham (Not Spam)** using **TF-IDF vectorization** and a **Multinomial Naive Bayes** classifier. Built as part of the AIML Summer Internship at Codec Technologies.
 
+Live Prototype: 
+[Click here to view](https://spam-email-detector-s5dz.onrender.com/)
+
 ## Overview
 
 Spam detection is a classic text classification problem. This project:
