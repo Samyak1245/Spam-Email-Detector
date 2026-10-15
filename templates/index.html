@@ -2,235 +2,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0b1020">
 
-    <title>MailGuard AI | Spam Email Classifier</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+    <title>Spam Email Classifier</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
+    <main class="container">
+        <h1>Spam Email Classifier</h1>
+        <p class="subtitle">
+            Enter an email message to check whether it is spam.
+        </p>
 
-    <header class="navbar">
-        <a href="/" class="brand">
-            <div class="brand-icon">M</div>
-            <span>MailGuard<span class="brand-accent"> AI</span></span>
-        </a>
+        <form method="POST" id="classifier-form">
+            <label for="message">Email content</label>
 
-        <div class="nav-status">
-            <span class="status-dot"></span>
-            ML CLASSIFIER
-        </div>
-    </header>
+            <textarea
+                id="message"
+                name="message"
+                placeholder="Paste your email here..."
+                required
+            >{{ message or '' }}</textarea>
 
-    <main class="main-content">
-
-        <section class="hero">
-            <div class="eyebrow">
-                <span class="sparkle">✦</span>
-                INTELLIGENT EMAIL SECURITY
+            <div class="form-footer">
+                <span id="char-count">0 characters</span>
+                <button type="button" id="clear-button">Clear</button>
             </div>
 
-            <h1>
-                Your inbox deserves<br>
-                <span class="gradient-text">a smarter defense.</span>
-            </h1>
+            <button type="submit" class="submit-button">
+                Classify Email
+            </button>
+        </form>
 
-            <p class="hero-description">
-                Detect suspicious messages before they become a problem.
-                Analyze email content using your machine-learning model.
-            </p>
-        </section>
+        {% if result %}
+        <section class="result
+            {{ 'spam' if result == 'Spam' else 'not-spam' }}"
+            aria-live="polite">
 
-        <section class="classifier-card">
-
-            <div class="card-top">
-                <div>
-                    <div class="card-label">EMAIL ANALYZER</div>
-                    <h2>Inspect a message</h2>
-                    <p class="card-description">
-                        Paste an email below to check its classification.
-                    </p>
-                </div>
-
-                <div class="shield-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M12 3 20 6V11C20 16 16.5 19.5 12 21C7.5 19.5 4 16 4 11V6L12 3Z"
-                              stroke="currentColor" stroke-width="1.6"
-                              stroke-linejoin="round"/>
-                        <path d="m9 12 2 2 4-4"
-                              stroke="currentColor" stroke-width="1.8"
-                              stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-            </div>
-
-            <form method="POST" id="classifier-form">
-
-                <div class="input-heading">
-                    <label for="message">EMAIL CONTENT</label>
-                    <span class="input-hint">Plain text supported</span>
-                </div>
-
-                <div class="textarea-wrapper">
-                    <textarea
-                        id="message"
-                        name="message"
-                        placeholder="Paste your email here...
-
-Example: Congratulations! You have won a special prize. Click here to claim your reward."
-                        maxlength="20000"
-                        required
-                    >{{ message or '' }}</textarea>
-
-                    <div class="textarea-footer">
-                        <span class="input-tip">
-                            <span class="tip-icon">ⓘ</span>
-                            Your message is analyzed by your ML model.
-                        </span>
-                        <span class="character-count">
-                            <span id="char-count">0</span> / 20,000
-                        </span>
-                    </div>
-                </div>
-
-                <div class="utility-actions">
-                    <button type="button" class="text-button"
-                            id="sample-button">
-                        <span>✦</span> Try sample
-                    </button>
-
-                    <button type="button" class="text-button"
-                            id="paste-button">
-                        <span>▣</span> Paste
-                    </button>
-
-                    <button type="button" class="text-button clear-button"
-                            id="clear-button">
-                        Clear text
-                    </button>
-                </div>
-
-                <button type="submit" class="analyze-button" id="analyze-button">
-                    <span class="button-content" id="button-content">
-                        Analyze Email
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M5 12H19M12 5L19 12L12 19"
-                                  stroke="currentColor" stroke-width="1.8"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    <span class="loading-content" id="loading-content"
-                          hidden>
-                        <span class="spinner"></span>
-                        Analyzing message...
-                    </span>
-                </button>
-
-            </form>
-
-            {% if result %}
-            <section class="result-panel
-                {{ 'spam-result' if result|string|lower == 'spam' else 'ham-result' }}"
-                aria-live="polite">
-
-                <div class="result-top">
-                    <div class="result-icon">
-                        {% if result|string|lower == 'spam' %}
-                            !
-                        {% else %}
-                            ✓
-                        {% endif %}
-                    </div>
-
-                    <div class="result-copy">
-                        <span class="result-overline">ANALYSIS COMPLETE</span>
-
-                        <h3>
-                            {% if result|string|lower == 'spam' %}
-                                Suspicious email detected
-                            {% else %}
-                                Email classified as legitimate
-                            {% endif %}
-                        </h3>
-
-                        <p>
-                            {% if result|string|lower == 'spam' %}
-                                This message was classified as spam.
-                                Be cautious with links and attachments.
-                            {% else %}
-                                This message was classified as legitimate
-                                by the model. Always remain vigilant.
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="confidence-section">
-                    <div class="confidence-heading">
-                        <span>Model confidence</span>
-                        <strong>{{ confidence }}%</strong>
-                    </div>
-
-                    <div class="confidence-track">
-                        <div class="confidence-fill"
-                             style="--confidence: {{ confidence }}%;"></div>
-                    </div>
-                </div>
-
-                <div class="result-disclaimer">
-                    <span>ⓘ</span>
-                    Confidence is the model's reported score, not a
-                    guarantee that the classification is correct.
-                </div>
-            </section>
-            {% endif %}
+            <h2>{{ result }}</h2>
+            <p>Model confidence: {{ confidence }}%</p>
 
         </section>
+        {% endif %}
 
-        <section class="feature-grid">
-            <article class="feature">
-                <div class="feature-icon blue-icon">⌁</div>
-                <div>
-                    <h3>ML-powered analysis</h3>
-                    <p>Uses your trained classification model.</p>
-                </div>
-            </article>
-
-            <article class="feature">
-                <div class="feature-icon purple-icon">◈</div>
-                <div>
-                    <h3>Instant prediction</h3>
-                    <p>Get a result after submitting a message.</p>
-                </div>
-            </article>
-
-            <article class="feature">
-                <div class="feature-icon green-icon">✓</div>
-                <div>
-                    <h3>Simple & accessible</h3>
-                    <p>Clear results in an easy-to-read interface.</p>
-                </div>
-            </article>
-        </section>
-
-        <footer class="footer">
-            <span>MAILGUARD AI</span>
-            <span>Built with Flask & Machine Learning</span>
-        </footer>
-
+        <p class="note">
+            Results are predictions from a machine-learning model
+            and may not always be correct.
+        </p>
     </main>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
