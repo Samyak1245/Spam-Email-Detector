@@ -20,7 +20,12 @@
 
         <form method="POST" id="classifier-form">
             <label for="message">Email content</label>
-
+<div class="samples">
+    <span>Try a sample:</span>
+    <button type="button" class="sample-button" data-type="spam">Spam</button>
+    <button type="button" class="sample-button" data-type="ham">Not spam</button>
+    <button type="button" class="sample-button" data-type="random">Random</button>
+</div>
             <textarea
                 id="message"
                 name="message"
@@ -38,17 +43,16 @@
             </button>
         </form>
 
-        {% if result %}
-        <section class="result
-            {{ 'spam' if result == 'Spam' else 'not-spam' }}"
-            aria-live="polite">
-
-            <h2>{{ result }}</h2>
-            <p>Model confidence: {{ confidence }}%</p>
-
-        </section>
-        {% endif %}
-
+       {% if result %}
+{% set is_spam = (result == 'Spam') %}
+<section class="result {{ 'spam' if is_spam else 'not-spam' }}" aria-live="polite">
+    <div class="result-flag">{{ '🚫 SPAM' if is_spam else '✅ NOT SPAM' }}</div>
+    <p>{{ 'This email looks suspicious.' if is_spam else 'This email looks safe.' }}</p>
+    <div class="confidence-label">Model confidence: {{ confidence }}%</div>
+    <div class="bar"><div class="bar-fill" style="width: {{ confidence }}%"></div></div>
+</section>
+{% endif %}
+        
         <p class="note">
             Results are predictions from a machine-learning model
             and may not always be correct.
