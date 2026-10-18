@@ -28,4 +28,48 @@ const samples = {
     ],
     ham: [
         "Hi Rahul, just a reminder that our project meeting is tomorrow at 10 AM. Please bring your report.",
-        "Hey, are we still on for lunch on Saturday? Let me know what time works for
+        "Hey, are we still on for lunch on Saturday? Let me know what time works for you.",
+        "Dear students, the assignment deadline has been extended to Friday. Please submit it on the portal.",
+        "Thanks for your help yesterday! I've attached the notes from the lecture. Let me know if anything is unclear."
+    ]
+};
+
+let lastSample = "";
+
+function loadSample(type) {
+    if (type === "random") {
+        type = Math.random() < 0.5 ? "spam" : "ham";
+    }
+
+    const list = samples[type];
+    let text;
+
+    // Avoid showing the same sample twice in a row
+    do {
+        text = list[Math.floor(Math.random() * list.length)];
+    } while (text === lastSample && list.length > 1);
+
+    lastSample = text;
+    message.value = text;
+    updateCount();
+    message.focus();
+}
+
+document.querySelectorAll(".sample-button").forEach(btn => {
+    btn.addEventListener("click", () => loadSample(btn.dataset.type));
+});
+
+// ---------- Loading state on submit ----------
+form.addEventListener("submit", () => {
+    submitButton.disabled = true;
+    submitButton.textContent = "Classifying...";
+});
+
+// ---------- Scroll to result after page reload ----------
+const result = document.querySelector(".result");
+if (result) {
+    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// ---------- Initial setup ----------
+updateCount();
