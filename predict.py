@@ -1,25 +1,28 @@
+import os
 import joblib
 
-model = joblib.load('model/spam_model.pkl')
-vectorizer = joblib.load('model/vectorizer.pkl')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = joblib.load(os.path.join(BASE_DIR, "model", "spam_model.pkl"))
+vectorizer = joblib.load(os.path.join(BASE_DIR, "model", "vectorizer.pkl"))
 
 
-def predict_message(text):
+def classify(text):
     vec = vectorizer.transform([text])
     pred = model.predict(vec)[0]
-    prob = model.predict_proba(vec)[0]
-    label = "Spam" if pred == 1 else "Not Spam"
-    return label, max(prob)
+    confidence = model.predict_proba(vec)[0][pred] * 100
+    label = "SPAM" if pred == 1 else "NOT SPAM"
+    return label, confidence
 
 
 if __name__ == "__main__":
     samples = [
-        "Congratulations! You won a free lottery ticket, claim now by clicking this link",
-        "Hey, are we still meeting at 5pm today?",
-        "URGENT! Your account has been suspended. Verify immediately to avoid penalty.",
-        "Can you send me the notes from today's class?"
+        "Congratulations! You won a free iPhone. Click here to claim now!",
+        "Hey, are we still meeting for lunch tomorrow?",
+        "URGENT: Your bank account is locked. Verify your details immediately.",
+        "Can you send me the notes from today's lecture?",
     ]
 
     for msg in samples:
-        label, confidence = predict_message(msg)
-        print(f"Message: {msg}\nPrediction: {label} (confidence: {confidence:.2f})\n")
+        label, conf = classify(msg)
+        print(f"Message : {msg}")
+        print(f"Result  : {label} ({conf:.1f}% confident)\n")
