@@ -83,9 +83,3 @@ After training, the model typically achieves **~96–98% accuracy** on the test 
 
 Naive Bayes assumes that features (words) are conditionally independent given the class label. While this is rarely true in real text (word order and co-occurrence matter), the algorithm still performs surprisingly well for spam filtering because the *presence* of certain words (e.g., "free", "winner", "urgent") is itself a strong, largely independent signal of spam — the independence assumption doesn't need to be perfectly true for the classifier to rank classes correctly.
 
-## Future Improvements
-- Try SVM or Logistic Regression and compare performance.
-- Use n-grams (bigrams/trigrams) in TF-IDF for better context capture.
-- Add lemmatization/stemming during preprocessing.
-- Deploy the Flask app on a cloud platform (Render/Heroku).
-
